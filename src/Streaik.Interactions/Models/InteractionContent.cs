@@ -1,0 +1,168 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace Streaik.Interactions.Models;
+
+[JsonConverter(typeof(InteractionStepJsonConverter))]
+public abstract class InteractionStep
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = default!;
+
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? AdditionalProperties { get; set; }
+}
+
+public sealed class InteractionThoughtStep : InteractionStep
+{
+    public InteractionThoughtStep() => Type = "thought";
+
+    [JsonPropertyName("signature")]
+    public string? Signature { get; set; }
+
+    [JsonPropertyName("summary")]
+    public List<InteractionContent>? Summary { get; set; }
+}
+ 
+public sealed class InteractionUserInputStep : InteractionStep
+{
+    public InteractionUserInputStep()
+    {
+        Type = "user_input";
+    }
+ 
+    [JsonPropertyName("content")]
+    public List<InteractionContent>? Content { get; set; }
+}
+ 
+public sealed class InteractionModelOutputStep : InteractionStep
+{
+    public InteractionModelOutputStep()
+    {
+        Type = "model_output";
+    }
+ 
+    [JsonPropertyName("content")]
+    public List<InteractionContent>? Content { get; set; }
+
+    [JsonPropertyName("error")]
+    public InteractionModelOutputError? Error { get; set; }
+}
+ 
+public sealed class InteractionUnknownStep : InteractionStep
+{
+}
+ 
+[JsonConverter(typeof(InteractionContentJsonConverter))]
+public abstract class InteractionContent
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = default!;
+
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? AdditionalProperties { get; set; }
+}
+
+public sealed class InteractionUnknownContent : InteractionContent
+{
+}
+
+public sealed class InteractionTextContent : InteractionContent
+{
+    public InteractionTextContent()
+    {
+        Type = "text";
+    }
+
+    [JsonPropertyName("text")]
+    public string? Text { get; set; }
+
+    [JsonPropertyName("annotations")]
+    public List<InteractionAnnotation>? Annotations { get; set; }
+}
+
+public sealed class InteractionImageContent : InteractionContent
+{
+    public InteractionImageContent()
+    {
+        Type = "image";
+    }
+
+    [JsonPropertyName("data")]
+    public string? Data { get; set; }
+
+    [JsonPropertyName("uri")]
+    public string? Uri { get; set; }
+
+    [JsonPropertyName("mime_type")]
+    public string? MimeType { get; set; }
+
+    [JsonPropertyName("resolution")]
+    public string? Resolution { get; set; }
+}
+
+public sealed class InteractionAudioContent : InteractionContent
+{
+    public InteractionAudioContent()
+    {
+        Type = "audio";
+    }
+
+    [JsonPropertyName("data")]
+    public string? Data { get; set; }
+
+    [JsonPropertyName("uri")]
+    public string? Uri { get; set; }
+
+    [JsonPropertyName("mime_type")]
+    public string? MimeType { get; set; }
+
+    [JsonPropertyName("sample_rate")]
+    public int? SampleRate { get; set; }
+
+    [JsonPropertyName("channels")]
+    public int? Channels { get; set; }
+}
+
+public sealed class InteractionDocumentContent : InteractionContent
+{
+    public InteractionDocumentContent()
+    {
+        Type = "document";
+    }
+
+    [JsonPropertyName("data")]
+    public string? Data { get; set; }
+
+    [JsonPropertyName("uri")]
+    public string? Uri { get; set; }
+
+    [JsonPropertyName("mime_type")]
+    public string? MimeType { get; set; }
+}
+
+public sealed class InteractionVideoContent : InteractionContent
+{
+    public InteractionVideoContent()
+    {
+        Type = "video";
+    }
+
+    [JsonPropertyName("data")]
+    public string? Data { get; set; }
+
+    [JsonPropertyName("uri")]
+    public string? Uri { get; set; }
+
+    [JsonPropertyName("mime_type")]
+    public string? MimeType { get; set; }
+
+    [JsonPropertyName("resolution")]
+    public string? Resolution { get; set; }
+
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    [JsonPropertyName("processing")]
+    public InteractionVideoProcessing? Processing { get; set; }
+}
